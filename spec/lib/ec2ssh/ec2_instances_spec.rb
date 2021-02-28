@@ -69,9 +69,9 @@ describe Ec2ssh::Ec2Instances do
 
   describe Ec2ssh::Ec2Instances::InstanceWrapper do
     let(:mock_instance) {
-      double('instance', n: 1, tags: [double('tag', key: 'Name', value: 'srvA')])
+      double('instance', profile_name: 'my_profile', n: 1, tags: [double('tag', key: 'Name', value: 'srvA')])
     }
-    let(:instance) { described_class.new(mock_instance) }
+    let(:instance) { described_class.new(mock_instance, 'my_profile') }
 
     describe '#tag' do
       it { expect(instance.tag('Name')).to eq 'srvA' }
@@ -81,6 +81,10 @@ describe Ec2ssh::Ec2Instances do
       it { expect(instance.tags).to match_array(have_attributes(key: 'Name', value: 'srvA')) }
       it { expect(instance.tags[0]).to have_attributes(key: 'Name', value: 'srvA') }
       it { expect { instance.tags['Name'] }.to raise_error Ec2ssh::DotfileValidationError }
+    end
+
+    describe '#profile_name' do
+      it { expect(instance.profile_name).to eq 'my_profile' }
     end
   end
 end

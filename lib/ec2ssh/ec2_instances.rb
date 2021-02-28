@@ -34,9 +34,12 @@ See: https://github.com/mirakui/ec2ssh#how-to-upgrade-from-3x
         end
       end
 
-      def initialize(ec2_instance)
+      attr_reader :profile_name
+
+      def initialize(ec2_instance, profile_name)
         @ec2_instance = ec2_instance
         @_tags ||= @ec2_instance.tags.each_with_object({}) {|t, h| h[t.key] = t.value }
+        @profile_name = profile_name
       end
 
       def tag(key)
@@ -84,7 +87,7 @@ See: https://github.com/mirakui/ec2ssh#how-to-upgrade-from-3x
         ec2s[key_name][region].instances(
           filters: @filters
         ).
-        map {|ins| InstanceWrapper.new(ins) }.
+        map {|ins| InstanceWrapper.new(ins, key_name) }.
         sort_by {|ins| ins.tag('Name').to_s }
       }.flatten
     end
